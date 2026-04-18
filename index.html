@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Waste Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+/* ═══ LIGHT THEME ═══ */
+:root{
+  --burg:#6b1226; --burg-mid:#8c1a33; --burg-lite:#b8233f; --burg-deep:#3d0a17;
+  --burg-pale:#f9f0f2; --burg-tint:#f2e4e7;
+  --gold:#c9973a; --gold-pale:#fdf6ea;
+  --bg-body:#fdfaf8; --bg-shell:#ffffff; --bg-surface:#ffffff; --bg-surf2:#f9f0f2; --bg-surf3:#f2e4e7;
+  --ink:#1a0810; --ink2:#4a2535; --ink3:#8c6272; --ink4:#c4a8b2;
+  --line:rgba(107,18,38,0.09); --line2:rgba(107,18,38,0.17);
+  --green:#0d7a4c; --green-pale:rgba(13,122,76,0.08);
+  --amber:#a06800; --amber-pale:rgba(160,104,0,0.09);
+  --s1:0 1px 3px rgba(107,18,38,0.07),0 1px 2px rgba(107,18,38,0.04);
+  --s2:0 4px 16px rgba(107,18,38,0.09),0 2px 6px rgba(107,18,38,0.05);
+  --s3:0 12px 40px rgba(107,18,38,0.13),0 4px 12px rgba(107,18,38,0.07);
+  --r1:8px; --r2:14px; --r3:20px; --r4:28px;
+  --inp-bg:#f9f0f2; --inp-focus:#fff;
+  --notif-bg:#ffffff; --notif-border:rgba(107,18,38,0.15);
+  --overlay:rgba(26,8,16,0.5);
+}
+
+/* ═══ DARK THEME ═══ */
+[data-theme="dark"]{
+  --bg-body:#0d0507; --bg-shell:#160b10; --bg-surface:#1e0f15; --bg-surf2:#261319; --bg-surf3:#30181f;
+  --ink:#f5eaee; --ink2:#d4aab8; --ink3:#9a6878; --ink4:#5c3a46;
+  --line:rgba(255,150,170,0.08); --line2:rgba(255,150,170,0.14);
+  --burg-pale:#261319; --burg-tint:#30181f;
+  --gold-pale:#201608;
+  --green-pale:rgba(13,122,76,0.12); --amber-pale:rgba(160,104,0,0.12);
+  --s1:0 1px 3px rgba(0,0,0,0.3),0 1px 2px rgba(0,0,0,0.2);
+  --s2:0 4px 16px rgba(0,0,0,0.35),0 2px 6px rgba(0,0,0,0.2);
+  --s3:0 12px 40px rgba(0,0,0,0.5),0 4px 12px rgba(0,0,0,0.3);
+  --inp-bg:#261319; --inp-focus:#30181f;
+  --notif-bg:#1e0f15; --notif-border:rgba(255,150,170,0.2);
+  --overlay:rgba(0,0,0,0.7);
+}
+
+/* ═══ RTL ARABIC ═══ */
+[dir="rtl"]{font-family:'Plus Jakarta Sans',sans-serif;}
+[dir="rtl"] .role-arr,.m-arr,.job-badge{transform:scaleX(-1);}
+[dir="rtl"] .brand-wrap{flex-direction:row-reverse;}
+
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg-body);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;transition:background .3s;}
+
+.shell{width:430px;height:840px;background:var(--bg-shell);border-radius:38px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--s3),0 0 0 1px var(--line);position:relative;transition:background .3s;}
+
+.pg{display:none;flex:1;flex-direction:column;overflow:hidden;}
+.pg.on{display:flex;}
+
+/* ═══ AUTH ═══ */
+.auth-hero{background:var(--burg);position:relative;overflow:hidden;display:flex;flex-direction:column;flex:1;}
+.hdeco{position:absolute;border-radius:50%;background:rgba(255,255,255,0.035);}
+.hdeco.a{width:340px;height:340px;top:-110px;right:-90px;}
+.hdeco.b{width:180px;height:180px;bottom:40px;left:-60px;}
+.hdeco.c{width:100px;height:100px;bottom:120px;right:30px;}
+
+/* Quick settings bar on auth */
+.auth-settings{position:absolute;top:14px;right:14px;z-index:10;display:flex;gap:6px;}
+[dir="rtl"] .auth-settings{right:auto;left:14px;}
+.qs-btn{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;transition:background .15s;}
+.qs-btn:hover{background:rgba(255,255,255,0.22);}
+
+.hero-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:60px 30px 26px;position:relative;z-index:1;}
+.brand-wrap{display:flex;align-items:center;gap:14px;}
+.brand-icon{width:54px;height:54px;border-radius:16px;background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center;font-size:26px;}
+.brand-text h1{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff;line-height:1.1;}
+.brand-text span{font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:0.6px;text-transform:uppercase;font-weight:500;}
+.hero-tagline{font-size:13px;color:rgba(255,255,255,0.55);text-align:center;line-height:1.7;max-width:280px;}
+
+.auth-pill{display:flex;background:rgba(255,255,255,0.1);border-radius:50px;padding:3px;margin-top:4px;border:1px solid rgba(255,255,255,0.15);}
+.auth-pill button{padding:8px 22px;border:none;background:transparent;color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;border-radius:50px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s;}
+.auth-pill button.on{background:#fff;color:var(--burg);}
+
+.auth-sheet{background:var(--bg-surface);border-radius:var(--r4) var(--r4) 0 0;padding:26px 24px 28px;display:flex;flex-direction:column;gap:14px;box-shadow:0 -10px 40px rgba(107,18,38,0.14);position:relative;z-index:2;transition:background .3s;}
+.sheet-hd h3{font-size:19px;font-weight:700;color:var(--ink);}
+.sheet-hd p{font-size:13px;color:var(--ink3);margin-top:3px;}
+
+.auth-form{display:flex;flex-direction:column;gap:12px;}
+.fld{display:flex;flex-direction:column;gap:5px;}
+.fld label{font-size:11px;font-weight:700;letter-spacing:0.65px;text-transform:uppercase;color:var(--ink3);}
+.inp{background:var(--inp-bg);border:1.5px solid transparent;border-radius:var(--r1);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;padding:13px 15px;outline:none;transition:border-color .17s,background .17s,color .17s;width:100%;}
+.inp::placeholder{color:var(--ink4);}
+.inp:focus{border-color:var(--burg-mid);background:var(--inp-focus);}
+textarea.inp{resize:none;height:84px;}
+select.inp{appearance:none;cursor:pointer;}
+
+.btn-p{background:var(--burg);color:#fff;border:none;border-radius:var(--r1);padding:14px;font-size:15px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:background .17s,transform .12s;letter-spacing:0.1px;width:100%;}
+.btn-p:hover{background:var(--burg-mid);transform:translateY(-1px);}
+.btn-p:active{transform:translateY(0);}
+
+.auth-links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.auth-links a{font-size:12px;color:var(--ink3);cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:4px;transition:color .15s;}
+.auth-links a:hover{color:var(--burg);}
+
+/* ═══ ROLE ═══ */
+.role-pg{background:var(--burg);align-items:center;justify-content:center;gap:22px;padding:36px 24px;position:relative;overflow:hidden;}
+.role-hd{text-align:center;position:relative;z-index:1;}
+.role-hd h2{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:5px;}
+.role-hd p{font-size:13px;color:rgba(255,255,255,0.5);}
+.role-cards{display:flex;flex-direction:column;gap:11px;width:100%;position:relative;z-index:1;}
+.role-card{background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.16);border-radius:var(--r3);padding:18px 20px;cursor:pointer;transition:all .22s;display:flex;align-items:center;gap:16px;}
+.role-card:hover{background:rgba(255,255,255,0.16);transform:translateY(-2px);}
+.role-ico{width:50px;height:50px;border-radius:14px;background:rgba(255,255,255,0.14);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.role-txt h3{font-size:15px;font-weight:700;color:#fff;margin-bottom:2px;}
+.role-txt p{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.45;}
+.role-arr{margin-left:auto;color:rgba(255,255,255,0.35);font-size:20px;}
+[dir="rtl"] .role-arr{margin-left:0;margin-right:auto;}
+
+/* ═══ APP HEADER ═══ */
+.app-hd{padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);flex-shrink:0;background:var(--bg-surface);transition:background .3s;}
+.hd-l{display:flex;align-items:center;gap:10px;}
+.av{width:38px;height:38px;border-radius:11px;background:var(--burg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+.av.tch{background:linear-gradient(135deg,var(--burg-deep),var(--burg));}
+.hd-name{font-size:14px;font-weight:700;color:var(--ink);}
+.hd-sub{font-size:11px;color:var(--ink3);margin-top:1px;}
+.hd-r{display:flex;gap:6px;}
+.icon-btn{width:34px;height:34px;border-radius:9px;background:var(--burg-pale);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;position:relative;transition:background .15s;color:var(--ink);}
+.icon-btn:hover{background:var(--burg-tint);}
+.ndot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--burg-lite);border:1.5px solid var(--bg-surface);}
+
+/* ═══ NAV ═══ */
+.nav{display:flex;gap:2px;padding:6px 10px;background:var(--bg-surface);flex-shrink:0;border-bottom:1px solid var(--line);transition:background .3s;}
+.nb{flex:1;padding:7px 3px;border:none;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:600;color:var(--ink3);cursor:pointer;border-radius:9px;transition:all .17s;display:flex;flex-direction:column;align-items:center;gap:3px;letter-spacing:0.2px;}
+.nb .ni{font-size:16px;}
+.nb.on{background:var(--burg-pale);color:var(--burg);}
+
+/* ═══ TAB ═══ */
+.tab{display:none;flex:1;overflow-y:auto;flex-direction:column;}
+.tab.on{display:flex;}
+.tab::-webkit-scrollbar{width:0;}
+.ti{padding:14px 15px 24px;display:flex;flex-direction:column;gap:0;}
+
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;margin-top:4px;}
+.sh h3{font-size:15px;font-weight:700;color:var(--ink);}
+.sh span{font-size:11px;color:var(--ink3);}
+
+.card{background:var(--bg-surface);border:1px solid var(--line2);border-radius:var(--r3);padding:15px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--s1);margin-bottom:15px;transition:background .3s;}
+
+.upload-zone{border:1.5px dashed var(--line2);border-radius:var(--r1);padding:15px;text-align:center;cursor:pointer;transition:border-color .17s,background .17s;position:relative;}
+.upload-zone:hover{border-color:var(--burg-mid);background:var(--burg-pale);}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.upload-zone .uico{font-size:20px;margin-bottom:3px;}
+.upload-zone strong{font-size:12px;color:var(--burg);display:block;font-weight:700;}
+.upload-zone p{font-size:11px;color:var(--ink3);margin-top:1px;}
+
+/* ═══ BADGES ═══ */
+.badge{font-size:10px;font-weight:700;letter-spacing:0.4px;padding:3px 8px;border-radius:20px;flex-shrink:0;text-transform:uppercase;}
+.b-pend{background:var(--amber-pale);color:var(--amber);border:1px solid rgba(160,104,0,0.18);}
+.b-actv{background:var(--burg-pale);color:var(--burg);border:1px solid var(--line2);}
+.b-done{background:var(--green-pale);color:var(--green);border:1px solid rgba(13,122,76,0.18);}
+
+/* ═══ REQ CARDS ═══ */
+.req-card{background:var(--bg-surface);border:1px solid var(--line);border-radius:var(--r2);padding:14px;margin-bottom:10px;box-shadow:var(--s1);transition:box-shadow .17s,border-color .17s,background .3s;}
+.req-card:hover{box-shadow:var(--s2);border-color:var(--line2);}
+.rt{display:flex;align-items:flex-start;justify-content:space-between;gap:9px;margin-bottom:8px;}
+.r-title{font-size:14px;font-weight:700;color:var(--ink);}
+.r-desc{font-size:12px;color:var(--ink3);line-height:1.55;margin-top:3px;}
+.r-meta{font-size:10px;color:var(--ink4);margin-top:8px;}
+.req-card img{width:100%;border-radius:8px;margin-top:8px;}
+
+/* ═══ CHAT ═══ */
+.chat-wrap{flex:1;display:flex;flex-direction:column;min-height:0;padding:14px 14px 0;}
+.chat-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:6px;}
+.chat-msgs::-webkit-scrollbar{width:0;}
+.msg-row{display:flex;}
+.msg-row.me{justify-content:flex-end;}
+.bubble{max-width:74%;padding:10px 13px;font-size:13px;line-height:1.55;border-radius:18px;}
+.bubble.them{background:var(--burg-pale);color:var(--ink);border-radius:4px 18px 18px 18px;border:1px solid var(--line);}
+.bubble.me{background:var(--burg);color:#fff;border-radius:18px 4px 18px 18px;}
+.chat-bar{display:flex;gap:7px;padding:10px 14px 14px;border-top:1px solid var(--line);flex-shrink:0;background:var(--bg-surface);}
+.chat-bar .inp{flex:1;padding:11px 13px;}
+.send-btn{width:44px;height:44px;border-radius:11px;background:var(--burg);border:none;cursor:pointer;color:#fff;font-size:16px;flex-shrink:0;transition:background .15s;display:flex;align-items:center;justify-content:center;}
+.send-btn:hover{background:var(--burg-mid);}
+
+/* ═══ ACCOUNT ═══ */
+.prof-banner{background:var(--burg);border-radius:var(--r3);padding:18px;display:flex;align-items:center;gap:13px;margin-bottom:13px;position:relative;overflow:hidden;}
+.prof-banner::before{content:'';position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.05);top:-70px;right:-30px;}
+.p-av{width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.28);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0;position:relative;z-index:1;}
+.p-info{position:relative;z-index:1;}
+.p-name{font-size:16px;font-weight:700;color:#fff;}
+.p-role{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:13px;}
+.stat-box{background:var(--bg-surface);border:1px solid var(--line);border-radius:var(--r2);padding:12px;text-align:center;box-shadow:var(--s1);transition:background .3s;}
+.s-num{font-size:22px;font-weight:700;color:var(--burg);font-family:'Playfair Display',serif;}
+.s-lbl{font-size:10px;color:var(--ink3);margin-top:2px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase;}
+.divider{height:1px;background:var(--line);margin:6px 0 12px;}
+.menu-item{background:var(--bg-surface);border:1px solid var(--line);border-radius:var(--r2);padding:13px 14px;display:flex;align-items:center;gap:11px;margin-bottom:7px;cursor:pointer;transition:all .15s;box-shadow:var(--s1);}
+.menu-item:hover{border-color:var(--line2);box-shadow:var(--s2);}
+.m-ico{width:34px;height:34px;border-radius:9px;background:var(--burg-pale);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.m-txt{flex:1;}
+.m-txt p{font-size:13px;font-weight:700;color:var(--ink);}
+.m-txt small{font-size:11px;color:var(--ink3);}
+.m-arr{color:var(--ink4);font-size:15px;}
+.menu-item.danger .m-txt p{color:#c0392b;}
+.menu-item.danger .m-ico{background:rgba(192,57,43,0.07);}
+.menu-item.gold .m-ico{background:var(--gold-pale);}
+.menu-item.gold .m-txt p{color:var(--gold);}
+
+/* ═══ SETTINGS PANEL (slide-in) ═══ */
+.settings-overlay{position:absolute;inset:0;background:var(--overlay);z-index:100;display:none;align-items:flex-end;transition:opacity .25s;}
+.settings-overlay.on{display:flex;}
+.settings-panel{background:var(--bg-surface);border-radius:var(--r4) var(--r4) 0 0;padding:22px 20px 28px;width:100%;box-shadow:0 -8px 40px rgba(0,0,0,0.2);transition:background .3s;}
+.sp-handle{width:36px;height:4px;border-radius:2px;background:var(--line2);margin:0 auto 18px;}
+.sp-title{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:18px;font-family:'Playfair Display',serif;}
+
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line);}
+.setting-row:last-child{border-bottom:none;}
+.sr-left{display:flex;align-items:center;gap:11px;}
+.sr-ico{width:36px;height:36px;border-radius:10px;background:var(--burg-pale);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.sr-lbl p{font-size:13px;font-weight:700;color:var(--ink);}
+.sr-lbl small{font-size:11px;color:var(--ink3);}
+
+/* Toggle switch */
+.toggle{width:44px;height:24px;border-radius:12px;background:var(--line2);border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.toggle::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .2s,box-shadow .2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+.toggle.on{background:var(--burg);}
+.toggle.on::after{transform:translateX(20px);}
+
+/* Language selector */
+.lang-sel{display:flex;gap:6px;}
+.lang-btn{padding:6px 12px;border-radius:20px;border:1.5px solid var(--line2);background:transparent;font-size:12px;font-weight:700;cursor:pointer;color:var(--ink3);font-family:'Plus Jakarta Sans',sans-serif;transition:all .17s;}
+.lang-btn.on{background:var(--burg);color:#fff;border-color:var(--burg);}
+
+/* Font size */
+.font-sel{display:flex;gap:6px;}
+.font-btn{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--line2);background:transparent;cursor:pointer;color:var(--ink3);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;transition:all .17s;display:flex;align-items:center;justify-content:center;}
+.font-btn.on{background:var(--burg);color:#fff;border-color:var(--burg);}
+
+/* ═══ NOTIFICATIONS PANEL ═══ */
+.notif-overlay{position:absolute;inset:0;background:var(--overlay);z-index:100;display:none;align-items:flex-start;}
+.notif-overlay.on{display:flex;}
+.notif-panel{background:var(--bg-surface);width:100%;border-radius:0 0 var(--r3) var(--r3);box-shadow:0 8px 30px rgba(0,0,0,0.2);max-height:70%;overflow-y:auto;transition:background .3s;}
+.notif-hd{padding:16px 18px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);}
+.notif-hd h3{font-size:16px;font-weight:700;color:var(--ink);}
+.notif-close{background:var(--burg-pale);border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;color:var(--ink3);}
+.notif-item{padding:13px 18px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start;}
+.notif-item.unread{background:var(--burg-pale);}
+.ni-ico{width:36px;height:36px;border-radius:10px;background:var(--burg-pale);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ni-ico.green-bg{background:var(--green-pale);}
+.ni-txt p{font-size:13px;font-weight:600;color:var(--ink);}
+.ni-txt small{font-size:11px;color:var(--ink3);margin-top:2px;display:block;}
+
+/* ═══ TECH ═══ */
+.tech-req{background:var(--bg-surface);border:1px solid var(--line);border-radius:var(--r2);padding:14px;margin-bottom:10px;box-shadow:var(--s1);transition:background .3s;}
+.tr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.tr-user{display:flex;align-items:center;gap:8px;}
+.tr-av{width:28px;height:28px;border-radius:8px;background:var(--burg-pale);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--burg);}
+.tr-name{font-size:12px;font-weight:700;color:var(--ink);}
+.tr-dev{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.tr-desc{font-size:12px;color:var(--ink3);line-height:1.5;}
+.acts{display:flex;gap:6px;margin-top:11px;}
+.act{flex:1;padding:8px;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s;text-transform:uppercase;letter-spacing:0.3px;}
+.act:hover{transform:translateY(-1px);}
+.act.ok{background:var(--burg-pale);color:var(--burg);border:1px solid var(--line2);}
+.act.done{background:var(--green-pale);color:var(--green);border:1px solid rgba(13,122,76,0.18);}
+.act.del{background:rgba(192,57,43,0.06);color:#c0392b;border:1px solid rgba(192,57,43,0.14);}
+
+.u-item{background:var(--bg-surface);border:1px solid var(--line);border-radius:var(--r2);padding:12px;display:flex;align-items:center;gap:10px;margin-bottom:7px;box-shadow:var(--s1);transition:background .3s;}
+.u-av{width:36px;height:36px;border-radius:10px;background:var(--burg-pale);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--burg);flex-shrink:0;}
+
+.cu-item{background:var(--bg-surface);border:1px solid var(--line);border-radius:var(--r2);padding:11px 13px;display:flex;align-items:center;gap:9px;margin-bottom:7px;cursor:pointer;transition:all .15s;box-shadow:var(--s1);}
+.cu-item:hover,.cu-item.sel{border-color:var(--burg);background:var(--burg-pale);}
+.cu-av{width:32px;height:32px;border-radius:9px;background:var(--burg-tint);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--burg);flex-shrink:0;}
+
+/* ═══ ABOUT ═══ */
+.about-pg{background:var(--bg-surface);}
+.about-hero{background:var(--burg);padding:38px 20px 32px;position:relative;overflow:hidden;flex-shrink:0;}
+.back-btn{position:relative;z-index:1;display:flex;align-items:center;gap:7px;cursor:pointer;background:none;border:none;color:rgba(255,255,255,0.6);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;margin-bottom:18px;padding:0;transition:color .15s;}
+.back-btn:hover{color:#fff;}
+.about-hero h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#fff;line-height:1.2;position:relative;z-index:1;}
+.about-hero h1 em{font-style:italic;color:rgba(255,255,255,0.55);}
+.about-hero p{font-size:13px;color:rgba(255,255,255,0.55);margin-top:9px;line-height:1.7;position:relative;z-index:1;}
+.about-body{flex:1;overflow-y:auto;padding:20px 16px 30px;}
+.about-body::-webkit-scrollbar{width:0;}
+.a-sec{margin-bottom:24px;}
+.a-sec h2{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:9px;display:flex;align-items:center;gap:8px;}
+.a-sec h2::after{content:'';flex:1;height:1px;background:var(--line);}
+.a-sec p{font-size:13px;color:var(--ink3);line-height:1.75;}
+.values-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
+.val-card{background:var(--burg-pale);border:1px solid var(--line);border-radius:var(--r2);padding:13px;}
+.val-card .vi{font-size:20px;margin-bottom:5px;}
+.val-card h4{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.val-card p{font-size:11px;color:var(--ink3);line-height:1.55;}
+.team-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
+.team-card{background:var(--bg-surface);border:1px solid var(--line2);border-radius:var(--r2);padding:13px;text-align:center;box-shadow:var(--s1);}
+.t-av{width:42px;height:42px;border-radius:12px;background:var(--burg);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;margin:0 auto 7px;}
+.t-name{font-size:12px;font-weight:700;color:var(--ink);}
+.t-role{font-size:10px;color:var(--ink3);margin-top:2px;}
+.strip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:4px;}
+.strip-box{background:var(--burg);border-radius:var(--r2);padding:13px;text-align:center;}
+.strip-num{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff;}
+.strip-lbl{font-size:10px;color:rgba(255,255,255,0.55);margin-top:2px;text-transform:uppercase;letter-spacing:0.4px;font-weight:600;}
+.join-cta{background:var(--burg);color:#fff;border:none;border-radius:var(--r2);padding:15px;font-size:14px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .17s;width:100%;display:flex;align-items:center;justify-content:center;gap:7px;}
+.join-cta:hover{background:var(--burg-mid);transform:translateY(-1px);}
+
+/* ═══ JOIN ═══ */
+.join-pg{background:var(--bg-surface);}
+.join-hero{background:var(--burg);padding:34px 20px 28px;position:relative;overflow:hidden;flex-shrink:0;}
+.join-hero h1{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#fff;line-height:1.2;position:relative;z-index:1;}
+.join-hero p{font-size:13px;color:rgba(255,255,255,0.55);margin-top:7px;line-height:1.65;position:relative;z-index:1;}
+.join-body{flex:1;overflow-y:auto;padding:18px 16px 30px;}
+.join-body::-webkit-scrollbar{width:0;}
+.openings h2{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:10px;}
+.job-card{background:var(--bg-surface);border:1px solid var(--line2);border-radius:var(--r2);padding:13px 14px;margin-bottom:8px;cursor:pointer;transition:all .17s;box-shadow:var(--s1);display:flex;align-items:center;gap:12px;}
+.job-card:hover{border-color:var(--burg);box-shadow:var(--s2);transform:translateX(3px);}
+.job-card.sel{border-color:var(--burg);background:var(--burg-pale);}
+.job-ico{width:38px;height:38px;border-radius:10px;background:var(--burg-pale);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.job-txt h4{font-size:13px;font-weight:700;color:var(--ink);}
+.job-txt p{font-size:11px;color:var(--ink3);margin-top:2px;}
+.job-badge{margin-left:auto;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--burg-pale);color:var(--burg);border:1px solid var(--line2);white-space:nowrap;}
+.apply-form{margin-top:6px;}
+.apply-form h2{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:13px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.success-msg{background:var(--green-pale);border:1px solid rgba(13,122,76,0.2);border-radius:var(--r2);padding:18px;text-align:center;display:none;margin-top:8px;}
+.success-msg .si{font-size:28px;margin-bottom:7px;}
+.success-msg h3{font-size:14px;font-weight:700;color:var(--green);}
+.success-msg p{font-size:12px;color:var(--ink3);margin-top:4px;line-height:1.6;}
+
+/* ═══ EMPTY ═══ */
+.empty{text-align:center;padding:40px 20px;color:var(--ink3);}
+.empty .ei{font-size:36px;margin-bottom:9px;}
+.empty p{font-size:14px;font-weight:600;color:var(--ink2);}
+.empty small{font-size:12px;color:var(--ink3);display:block;margin-top:3px;}
+
+/* ═══ FONT SIZES ═══ */
+.fs-sm{font-size:13px!important;}
+.fs-sm .inp{font-size:13px;}
+.fs-lg .inp{font-size:15px;}
+.fs-lg .r-title,.fs-lg .tr-dev,.fs-lg .hd-name{font-size:16px!important;}
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(13px);}to{opacity:1;transform:translateY(0);}}
+.pg.on > *{animation:fadeUp .27s ease both;}
+.pg.on > *:nth-child(2){animation-delay:.04s;}
+.pg.on > *:nth-child(3){animation-delay:.08s;}
+
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+.notif-panel{animation:slideDown .22s ease both;}
+
+@keyframes slideUp2{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.settings-panel{animation:slideUp2 .22s ease both;}
+</style>
+</head>
+<body>
+<div class="shell" id="shell">
+
+<!-- ══ SETTINGS OVERLAY ══ -->
+<div class="settings-overlay" id="settingsOverlay" onclick="closeSettings(event)">
+  <div class="settings-panel" onclick="e=>e.stopPropagation()">
+    <div class="sp-handle"></div>
+    <div class="sp-title" data-t="settings">Settings</div>
+
+    <!-- Dark Mode -->
+    <div class="setting-row">
+      <div class="sr-left">
+        <div class="sr-ico">🌙</div>
+        <div class="sr-lbl"><p data-t="dark_mode">Dark Mode</p><small data-t="dark_mode_sub">Easy on the eyes</small></div>
+      </div>
+      <button class="toggle" id="darkToggle" onclick="toggleDark()"></button>
+    </div>
+
+    <!-- Language -->
+    <div class="setting-row">
+      <div class="sr-left">
+        <div class="sr-ico">🌐</div>
+        <div class="sr-lbl"><p data-t="language">Language</p><small data-t="language_sub">App display language</small></div>
+      </div>
+      <div class="lang-sel">
+        <button class="lang-btn on" id="langEN" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" id="langAR" onclick="setLang('ar')">عربي</button>
+      </div>
+    </div>
+
+    <!-- Font size -->
+    <div class="setting-row">
+      <div class="sr-left">
+        <div class="sr-ico">🔤</div>
+        <div class="sr-lbl"><p data-t="font_size">Font Size</p><small data-t="font_size_sub">Adjust text size</small></div>
+      </div>
+      <div class="font-sel">
+        <button class="font-btn" id="fsS" onclick="setFont('sm')" title="Small">A</button>
+        <button class="font-btn on" id="fsM" onclick="setFont('md')" title="Medium" style="font-size:15px;">A</button>
+        <button class="font-btn" id="fsL" onclick="setFont('lg')" title="Large" style="font-size:18px;">A</button>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="setting-row">
+      <div class="sr-left">
+        <div class="sr-ico">🔔</div>
+        <div class="sr-lbl"><p data-t="notifications">Notifications</p><small data-t="notifications_sub">Push alerts for updates</small></div>
+      </div>
+      <button class="toggle on" id="notifToggle" onclick="this.classList.toggle('on')"></button>
+    </div>
+
+    <!-- Sound -->
+    <div class="setting-row">
+      <div class="sr-left">
+        <div class="sr-ico">🔊</div>
+        <div class="sr-lbl"><p data-t="sound">Sound</p><small data-t="sound_sub">Message & alert sounds</small></div>
+      </div>
+      <button class="toggle on" id="soundToggle" onclick="this.classList.toggle('on')"></button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ NOTIFICATIONS OVERLAY ══ -->
+<div class="notif-overlay" id="notifOverlay" onclick="closeNotif(event)">
+  <div class="notif-panel" onclick="e=>e.stopPropagation()">
+    <div class="notif-hd">
+      <h3 data-t="notifications">Notifications</h3>
+      <button class="notif-close" onclick="closeNotif()">✕</button>
+    </div>
+    <div class="notif-item unread">
+      <div class="ni-ico">📋</div>
+      <div class="ni-txt"><p data-t="notif1">Request #1042 accepted</p><small data-t="notif1_sub">Your laptop repair is now in progress</small></div>
+    </div>
+    <div class="notif-item unread">
+      <div class="ni-ico green-bg">✅</div>
+      <div class="ni-txt"><p data-t="notif2">Request #1039 completed</p><small data-t="notif2_sub">Your phone has been repaired. Tap to review.</small></div>
+    </div>
+    <div class="notif-item">
+      <div class="ni-ico">💬</div>
+      <div class="ni-txt"><p data-t="notif3">New message from technician</p><small data-t="notif3_sub">2 hours ago</small></div>
+    </div>
+    <div class="notif-item">
+      <div class="ni-ico">🔧</div>
+      <div class="ni-txt"><p data-t="notif4">Technician assigned</p><small data-t="notif4_sub">Yesterday · 3:40 PM</small></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LOGIN ══ -->
+<div id="pg-login" class="pg on">
+  <div class="auth-hero">
+    <div class="hdeco a"></div><div class="hdeco b"></div><div class="hdeco c"></div>
+    <div class="auth-settings">
+      <button class="qs-btn" onclick="openSettings()" title="Settings">⚙️</button>
+      <button class="qs-btn" id="qs-lang" onclick="quickLang()">EN</button>
+      <button class="qs-btn" id="qs-dark" onclick="toggleDark()">🌙</button>
+    </div>
+    <div class="hero-inner">
+      <div class="brand-wrap">
+        <div class="brand-icon">♻️</div>
+        <div class="brand-text">
+          <h1 data-t="brand">E-Waste Platform</h1>
+          <span data-t="brand_sub">Enterprise Repair & Recycling</span>
+        </div>
+      </div>
+      <p class="hero-tagline" data-t="tagline">Egypt's leading platform for professional e-waste repair and responsible recycling.</p>
+      <div class="auth-pill">
+        <button class="on" id="pill-login" onclick="switchAuth('login')" data-t="sign_in">Sign In</button>
+        <button id="pill-reg" onclick="switchAuth('reg')" data-t="register">Register</button>
+      </div>
+    </div>
+    <div class="auth-sheet">
+      <div id="form-login">
+        <div class="sheet-hd"><h3 data-t="welcome_back">Welcome back</h3><p data-t="sign_in_sub">Sign in to your account</p></div>
+        <div class="auth-form" style="margin-top:13px;">
+          <div class="fld"><label data-t="username">Username</label><input class="inp" id="loginName" data-ph="username_ph" placeholder="Enter your username"></div>
+          <div class="fld"><label data-t="password">Password</label><input class="inp" id="loginPass" type="password" placeholder="••••••••"></div>
+          <button class="btn-p" onclick="login()" data-t="sign_in_btn">Sign In →</button>
+        </div>
+      </div>
+      <div id="form-reg" style="display:none;">
+        <div class="sheet-hd"><h3 data-t="create_account">Create account</h3><p data-t="create_sub">Join thousands of businesses</p></div>
+        <div class="auth-form" style="margin-top:13px;">
+          <div class="fld"><label data-t="username">Username</label><input class="inp" id="regName" data-ph="username_ph" placeholder="Choose a username"></div>
+          <div class="fld"><label data-t="password">Password</label><input class="inp" id="regPass" type="password" placeholder="••••••••"></div>
+          <button class="btn-p" onclick="register()" data-t="create_btn">Create Account →</button>
+        </div>
+      </div>
+      <div class="auth-links">
+        <a onclick="show('pg-about')">ℹ️ <span data-t="about_us">About Us</span></a>
+        <a onclick="show('pg-join')">💼 <span data-t="join_team">Join Our Team</span></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ROLE ══ -->
+<div id="pg-role" class="pg role-pg">
+  <div class="hdeco a"></div>
+  <div class="role-hd"><h2 data-t="how_join">How are you joining?</h2><p data-t="select_role">Select your role to continue</p></div>
+  <div class="role-cards">
+    <div class="role-card" onclick="setRole('client')">
+      <div class="role-ico">📦</div>
+      <div class="role-txt"><h3 data-t="client">Client</h3><p data-t="client_desc">Submit repair requests and track your devices in real time</p></div>
+      <span class="role-arr">›</span>
+    </div>
+    <div class="role-card" onclick="checkTech()">
+      <div class="role-ico">🔧</div>
+      <div class="role-txt"><h3 data-t="technician">Technician</h3><p data-t="tech_desc">Manage repair requests and deliver professional services</p></div>
+      <span class="role-arr">›</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CLIENT APP ══ -->
+<div id="pg-client" class="pg">
+  <div class="app-hd">
+    <div class="hd-l">
+      <div class="av" id="clAv">CL</div>
+      <div><div class="hd-name" id="clName">Client</div><div class="hd-sub" data-t="client_account">Client Account</div></div>
+    </div>
+    <div class="hd-r">
+      <button class="icon-btn" onclick="openSettings()" title="Settings">⚙️</button>
+      <button class="icon-btn" onclick="show('pg-about')">ℹ️</button>
+      <button class="icon-btn" onclick="openNotif()">🔔<span class="ndot"></span></button>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nb on" onclick="gt('cl','req',this)"><span class="ni">📋</span><span data-t="requests">Requests</span></button>
+    <button class="nb" onclick="gt('cl','chat',this)"><span class="ni">💬</span><span data-t="chat">Chat</span></button>
+    <button class="nb" onclick="gt('cl','acc',this)"><span class="ni">👤</span><span data-t="account">Account</span></button>
+  </div>
+
+  <div class="tab on" id="cl-req">
+    <div class="ti">
+      <div class="sh"><h3 data-t="new_request">New Request</h3></div>
+      <div class="card">
+        <div class="fld"><label data-t="device_type">Device Type</label><input class="inp" id="device" data-ph="device_ph" placeholder="e.g. Laptop, Phone, Printer"></div>
+        <div class="fld"><label data-t="problem_desc">Problem Description</label><textarea class="inp" id="problem" data-ph="problem_ph" placeholder="Describe the issue in detail…"></textarea></div>
+        <div class="upload-zone">
+          <input type="file" id="img" accept="image/*" onchange="prevImg(this)">
+          <div class="uico">📎</div>
+          <strong data-t="attach_photo">Attach a photo</strong>
+          <p data-t="tap_browse">Tap to browse your gallery</p>
+        </div>
+        <div id="imgPrev"></div>
+        <button class="btn-p" onclick="addReq()" data-t="submit_request">Submit Request →</button>
+      </div>
+      <div class="sh"><h3 data-t="my_requests">My Requests</h3><span id="rCount">0 total</span></div>
+      <div id="reqList"></div>
+    </div>
+  </div>
+
+  <div class="tab" id="cl-chat">
+    <div class="chat-wrap"><div class="chat-msgs" id="chatBox"></div></div>
+    <div class="chat-bar">
+      <input class="inp" id="msg" data-ph="write_msg" placeholder="Write a message…">
+      <button class="send-btn" onclick="sendMsg()">➤</button>
+    </div>
+  </div>
+
+  <div class="tab" id="cl-acc">
+    <div class="ti">
+      <div class="prof-banner">
+        <div class="p-av" id="accAv">CL</div>
+        <div class="p-info"><div class="p-name" id="accName">Client</div><div class="p-role" data-t="client_active">Client Account · Active</div></div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="s-num" id="sT">0</div><div class="s-lbl" data-t="total">Total</div></div>
+        <div class="stat-box"><div class="s-num" id="sP">0</div><div class="s-lbl" data-t="pending">Pending</div></div>
+        <div class="stat-box"><div class="s-num" id="sD">0</div><div class="s-lbl" data-t="done">Done</div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="menu-item" onclick="openSettings()"><div class="m-ico">⚙️</div><div class="m-txt"><p data-t="settings">Settings</p><small data-t="settings_sub">Dark mode, language & more</small></div><span class="m-arr">›</span></div>
+      <div class="menu-item" onclick="show('pg-about')"><div class="m-ico">ℹ️</div><div class="m-txt"><p data-t="about_us">About Us</p><small data-t="about_sub">Our mission and team</small></div><span class="m-arr">›</span></div>
+      <div class="menu-item gold" onclick="show('pg-join')"><div class="m-ico">💼</div><div class="m-txt"><p data-t="join_team">Join Our Team</p><small data-t="join_sub">Explore career opportunities</small></div><span class="m-arr">›</span></div>
+      <div class="menu-item danger" onclick="logout()"><div class="m-ico">🚪</div><div class="m-txt"><p data-t="sign_out">Sign Out</p><small data-t="sign_out_sub">End your session</small></div><span class="m-arr">›</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TECH APP ══ -->
+<div id="pg-tech" class="pg">
+  <div class="app-hd">
+    <div class="hd-l">
+      <div class="av tch" id="tcAv">TC</div>
+      <div><div class="hd-name" id="tcName">Tech</div><div class="hd-sub">Tech Support · <span id="openCnt" style="color:var(--burg);font-weight:700;">0 open</span></div></div>
+    </div>
+    <div class="hd-r">
+      <button class="icon-btn" onclick="openSettings()">⚙️</button>
+      <button class="icon-btn" onclick="show('pg-about')">ℹ️</button>
+      <button class="icon-btn" onclick="openNotif()">🔔<span class="ndot"></span></button>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nb on" onclick="gt('tc','req',this)"><span class="ni">📋</span><span data-t="requests">Requests</span></button>
+    <button class="nb" onclick="gt('tc','chat',this)"><span class="ni">💬</span><span data-t="chat">Chat</span></button>
+    <button class="nb" onclick="gt('tc','users',this)"><span class="ni">👥</span><span data-t="users">Users</span></button>
+  </div>
+  <div class="tab on" id="tc-req">
+    <div class="ti">
+      <div class="sh"><h3 data-t="all_requests">All Requests</h3><span id="tcCnt">0 total</span></div>
+      <div id="tcReqList"></div>
+    </div>
+  </div>
+  <div class="tab" id="tc-chat">
+    <div class="ti" style="flex:1;">
+      <div class="sh"><h3 data-t="conversations">Conversations</h3></div>
+      <div id="tcUserList"></div>
+      <div id="tcChatArea" style="display:none;flex-direction:column;margin-top:4px;">
+        <div class="divider"></div>
+        <div class="chat-wrap" style="min-height:220px;display:flex;flex-direction:column;">
+          <div class="chat-msgs" id="tcChatBox" style="flex:1;"></div>
+        </div>
+        <div class="chat-bar">
+          <input class="inp" id="tmsg" data-ph="reply_ph" placeholder="Reply…">
+          <button class="send-btn" onclick="sendReply()">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tab" id="tc-users">
+    <div class="ti">
+      <div class="sh"><h3 data-t="all_users">All Users</h3></div>
+      <div id="usersList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ABOUT ══ -->
+<div id="pg-about" class="pg about-pg">
+  <div class="about-hero">
+    <div class="hdeco a"></div><div class="hdeco b"></div>
+    <button class="back-btn" onclick="goBack()">‹ <span data-t="back">Back</span></button>
+    <h1 data-t="about_title">About<br><em>E-Waste Platform</em></h1>
+    <p data-t="about_hero_sub">Egypt's leading enterprise platform for professional e-waste repair, recycling, and responsible disposal.</p>
+  </div>
+  <div class="about-body">
+    <div class="a-sec"><h2 data-t="our_mission">Our Mission</h2><p data-t="mission_text">We connect businesses and individuals with certified technicians to repair and responsibly recycle electronic devices — reducing landfill waste, lowering carbon footprint, and extending the life of technology across Egypt.</p></div>
+    <div class="a-sec"><h2 data-t="by_numbers">By the Numbers</h2>
+      <div class="strip">
+        <div class="strip-box"><div class="strip-num">2,400+</div><div class="strip-lbl" data-t="devices_fixed">Devices Fixed</div></div>
+        <div class="strip-box"><div class="strip-num">180+</div><div class="strip-lbl" data-t="technicians">Technicians</div></div>
+        <div class="strip-box"><div class="strip-num">98%</div><div class="strip-lbl" data-t="satisfaction">Satisfaction</div></div>
+      </div>
+    </div>
+    <div class="a-sec"><h2 data-t="our_values">Our Values</h2>
+      <div class="values-grid">
+        <div class="val-card"><div class="vi">♻️</div><h4 data-t="v1">Sustainability</h4><p data-t="v1d">Every repair is a step toward a greener planet.</p></div>
+        <div class="val-card"><div class="vi">🛡️</div><h4 data-t="v2">Trust</h4><p data-t="v2d">Certified technicians, guaranteed quality.</p></div>
+        <div class="val-card"><div class="vi">⚡</div><h4 data-t="v3">Speed</h4><p data-t="v3d">Fast turnaround with real-time tracking.</p></div>
+        <div class="val-card"><div class="vi">🤝</div><h4 data-t="v4">Fairness</h4><p data-t="v4d">Transparent pricing, no hidden fees.</p></div>
+      </div>
+    </div>
+    <div class="a-sec"><h2 data-t="leadership">Leadership Team</h2>
+      <div class="team-grid">
+        <div class="team-card"><div class="t-av">AH</div><div class="t-name">Ahmed Hassan</div><div class="t-role" data-t="ceo">CEO & Co-founder</div></div>
+        <div class="team-card"><div class="t-av">SM</div><div class="t-name">Sara Mohamed</div><div class="t-role" data-t="cto">CTO & Co-founder</div></div>
+        <div class="team-card"><div class="t-av">KA</div><div class="t-name">Khaled Ali</div><div class="t-role" data-t="head_ops">Head of Operations</div></div>
+        <div class="team-card"><div class="t-av">NE</div><div class="t-name">Nour El-Din</div><div class="t-role" data-t="head_tech">Head of Tech</div></div>
+      </div>
+    </div>
+    <div class="a-sec"><h2 data-t="join_the_team">Join the Team</h2><p data-t="join_cta_text" style="margin-bottom:11px;">We're always looking for talented people who share our passion for technology and sustainability.</p>
+      <button class="join-cta" onclick="show('pg-join')">💼 <span data-t="see_positions">See Open Positions →</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ JOIN ══ -->
+<div id="pg-join" class="pg join-pg">
+  <div class="join-hero">
+    <div class="hdeco a"></div>
+    <button class="back-btn" onclick="goBack()">‹ <span data-t="back">Back</span></button>
+    <h1 data-t="join_title">Join Our<br>Team</h1>
+    <p data-t="join_hero_sub">Help us build the future of e-waste management in Egypt.</p>
+  </div>
+  <div class="join-body">
+    <div class="openings" style="margin-bottom:20px;">
+      <h2 data-t="open_positions">Open Positions</h2>
+      <div class="job-card" id="job-tech" onclick="selectJob('Field Technician')">
+        <div class="job-ico">🔧</div>
+        <div class="job-txt"><h4 data-t="job1">Field Technician</h4><p data-t="job1_loc">Cairo · Full-time</p></div>
+        <span class="job-badge" data-t="urgent">Urgent</span>
+      </div>
+      <div class="job-card" id="job-dev" onclick="selectJob('Software Engineer')">
+        <div class="job-ico">💻</div>
+        <div class="job-txt"><h4 data-t="job2">Software Engineer</h4><p data-t="job2_loc">Remote · Full-time</p></div>
+        <span class="job-badge">3 spots</span>
+      </div>
+      <div class="job-card" id="job-ops" onclick="selectJob('Operations Manager')">
+        <div class="job-ico">📊</div>
+        <div class="job-txt"><h4 data-t="job3">Operations Manager</h4><p data-t="job3_loc">Alexandria · Full-time</p></div>
+        <span class="job-badge" data-t="new_badge">New</span>
+      </div>
+      <div class="job-card" id="job-cs" onclick="selectJob('Customer Success')">
+        <div class="job-ico">🎧</div>
+        <div class="job-txt"><h4 data-t="job4">Customer Success</h4><p data-t="job4_loc">Cairo · Part-time</p></div>
+        <span class="job-badge">2 spots</span>
+      </div>
+    </div>
+    <div class="apply-form">
+      <h2 data-t="apply_now">Apply Now</h2>
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <div class="fld"><label data-t="applying_for">Applying For</label><input class="inp" id="jobPos" data-ph="select_pos" placeholder="Select a position above" readonly></div>
+        <div class="form-row">
+          <div class="fld"><label data-t="first_name">First Name</label><input class="inp" id="appFirst" placeholder="Ahmed"></div>
+          <div class="fld"><label data-t="last_name">Last Name</label><input class="inp" id="appLast" placeholder="Hassan"></div>
+        </div>
+        <div class="fld"><label data-t="email">Email</label><input class="inp" id="appEmail" type="email" placeholder="you@example.com"></div>
+        <div class="fld"><label data-t="phone">Phone</label><input class="inp" id="appPhone" type="tel" placeholder="+20 1XX XXX XXXX"></div>
+        <div class="fld"><label data-t="experience">Experience</label>
+          <select class="inp" id="appExp">
+            <option value="" data-t="select_exp">Select experience level</option>
+            <option data-t="exp0">0–1 years (Fresh graduate)</option>
+            <option data-t="exp1">1–3 years</option>
+            <option data-t="exp2">3–5 years</option>
+            <option data-t="exp3">5+ years</option>
+          </select>
+        </div>
+        <div class="fld"><label data-t="why_join">Why do you want to join?</label><textarea class="inp" id="appWhy" data-ph="why_ph" placeholder="Tell us about yourself…"></textarea></div>
+        <div class="upload-zone" style="margin-bottom:4px;">
+          <input type="file" id="appCv" accept=".pdf,.doc,.docx">
+          <div class="uico">📄</div>
+          <strong data-t="upload_cv">Upload your CV</strong>
+          <p data-t="cv_sub">PDF or Word, max 5MB</p>
+        </div>
+        <button class="btn-p" onclick="submitApp()" data-t="submit_app">Submit Application →</button>
+        <div class="success-msg" id="appSuccess">
+          <div class="si">🎉</div>
+          <h3 data-t="app_submitted">Application Submitted!</h3>
+          <p data-t="app_submitted_sub">Our HR team will review your profile and reach out within 3–5 business days.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /shell -->
+
+<script>
+/* ═══════════════════════════════════
+   TRANSLATIONS
+═══════════════════════════════════ */
+const T = {
+  en: {
+    brand:"E-Waste Platform", brand_sub:"Enterprise Repair & Recycling",
+    tagline:"Egypt's leading platform for professional e-waste repair and responsible recycling.",
+    sign_in:"Sign In", register:"Register",
+    welcome_back:"Welcome back", sign_in_sub:"Sign in to your account",
+    create_account:"Create account", create_sub:"Join thousands of businesses",
+    username:"Username", password:"Password",
+    sign_in_btn:"Sign In →", create_btn:"Create Account →",
+    username_ph:"Enter your username", device_ph:"e.g. Laptop, Phone, Printer",
+    problem_ph:"Describe the issue in detail…", write_msg:"Write a message…",
+    reply_ph:"Reply…", why_ph:"Tell us about yourself…", select_pos:"Select a position above",
+    about_us:"About Us", join_team:"Join Our Team",
+    how_join:"How are you joining?", select_role:"Select your role to continue",
+    client:"Client", client_desc:"Submit repair requests and track your devices in real time",
+    technician:"Technician", tech_desc:"Manage repair requests and deliver professional services",
+    client_account:"Client Account", client_active:"Client Account · Active",
+    requests:"Requests", chat:"Chat", account:"Account", users:"Users",
+    new_request:"New Request", my_requests:"My Requests",
+    device_type:"Device Type", problem_desc:"Problem Description",
+    attach_photo:"Attach a photo", tap_browse:"Tap to browse your gallery",
+    submit_request:"Submit Request →",
+    total:"Total", pending:"Pending", done:"Done",
+    settings:"Settings", settings_sub:"Dark mode, language & more",
+    about_sub:"Our mission and team", join_sub:"Explore career opportunities",
+    sign_out:"Sign Out", sign_out_sub:"End your session",
+    dark_mode:"Dark Mode", dark_mode_sub:"Easy on the eyes",
+    language:"Language", language_sub:"App display language",
+    font_size:"Font Size", font_size_sub:"Adjust text size",
+    notifications:"Notifications", notifications_sub:"Push alerts for updates",
+    sound:"Sound", sound_sub:"Message & alert sounds",
+    notif1:"Request #1042 accepted", notif1_sub:"Your laptop repair is now in progress",
+    notif2:"Request #1039 completed", notif2_sub:"Your phone has been repaired. Tap to review.",
+    notif3:"New message from technician", notif3_sub:"2 hours ago",
+    notif4:"Technician assigned", notif4_sub:"Yesterday · 3:40 PM",
+    back:"Back", about_title:"About\nE-Waste Platform",
+    about_hero_sub:"Egypt's leading enterprise platform for e-waste repair, recycling, and disposal.",
+    our_mission:"Our Mission", mission_text:"We connect businesses and individuals with certified technicians to repair and responsibly recycle electronic devices.",
+    by_numbers:"By the Numbers", our_values:"Our Values", leadership:"Leadership Team",
+    devices_fixed:"Devices Fixed", technicians:"Technicians", satisfaction:"Satisfaction",
+    v1:"Sustainability", v1d:"Every repair is a step toward a greener planet.",
+    v2:"Trust", v2d:"Certified technicians, guaranteed quality.",
+    v3:"Speed", v3d:"Fast turnaround with real-time tracking.",
+    v4:"Fairness", v4d:"Transparent pricing, no hidden fees.",
+    ceo:"CEO & Co-founder", cto:"CTO & Co-founder", head_ops:"Head of Operations", head_tech:"Head of Tech",
+    join_the_team:"Join the Team", join_cta_text:"We're always looking for talented people.",
+    see_positions:"See Open Positions →",
+    join_title:"Join Our Team", join_hero_sub:"Help us build the future of e-waste management in Egypt.",
+    open_positions:"Open Positions",
+    job1:"Field Technician", job1_loc:"Cairo · Full-time",
+    job2:"Software Engineer", job2_loc:"Remote · Full-time",
+    job3:"Operations Manager", job3_loc:"Alexandria · Full-time",
+    job4:"Customer Success", job4_loc:"Cairo · Part-time",
+    urgent:"Urgent", new_badge:"New",
+    apply_now:"Apply Now", applying_for:"Applying For",
+    first_name:"First Name", last_name:"Last Name",
+    email:"Email", phone:"Phone", experience:"Experience",
+    select_exp:"Select experience level",
+    exp0:"0–1 years (Fresh graduate)", exp1:"1–3 years", exp2:"3–5 years", exp3:"5+ years",
+    why_join:"Why do you want to join?",
+    upload_cv:"Upload your CV", cv_sub:"PDF or Word, max 5MB",
+    submit_app:"Submit Application →",
+    app_submitted:"Application Submitted!", app_submitted_sub:"Our HR team will review your profile within 3–5 business days.",
+    all_requests:"All Requests", all_users:"All Users", conversations:"Conversations",
+    pending_badge:"Pending", active_badge:"Active", done_badge:"Done",
+    accept:"Accept", mark_done:"Mark Done", remove:"Remove",
+  },
+  ar: {
+    brand:"منصة النفايات الإلكترونية", brand_sub:"إصلاح وإعادة تدوير للشركات",
+    tagline:"المنصة الرائدة في مصر للإصلاح الاحترافي والتدوير المسؤول للإلكترونيات.",
+    sign_in:"تسجيل الدخول", register:"إنشاء حساب",
+    welcome_back:"مرحباً بك", sign_in_sub:"سجّل دخولك لحسابك",
+    create_account:"إنشاء حساب", create_sub:"انضم لآلاف الشركات",
+    username:"اسم المستخدم", password:"كلمة المرور",
+    sign_in_btn:"دخول ←", create_btn:"إنشاء الحساب ←",
+    username_ph:"أدخل اسم المستخدم", device_ph:"مثلاً: لابتوب، موبايل، طابعة",
+    problem_ph:"اشرح المشكلة بالتفصيل…", write_msg:"اكتب رسالة…",
+    reply_ph:"رد…", why_ph:"أخبرنا عن نفسك…", select_pos:"اختر وظيفة من الأعلى",
+    about_us:"عن المنصة", join_team:"انضم لفريقنا",
+    how_join:"كيف ستنضم؟", select_role:"اختر دورك للمتابعة",
+    client:"عميل", client_desc:"قدّم طلبات إصلاح وتابع أجهزتك بشكل فوري",
+    technician:"فني", tech_desc:"أدر طلبات الإصلاح وقدّم خدمات احترافية",
+    client_account:"حساب عميل", client_active:"حساب عميل · نشط",
+    requests:"الطلبات", chat:"الدردشة", account:"الحساب", users:"المستخدمون",
+    new_request:"طلب جديد", my_requests:"طلباتي",
+    device_type:"نوع الجهاز", problem_desc:"وصف المشكلة",
+    attach_photo:"إرفاق صورة", tap_browse:"اضغط لاختيار صورة",
+    submit_request:"إرسال الطلب ←",
+    total:"الإجمالي", pending:"قيد الانتظار", done:"مكتمل",
+    settings:"الإعدادات", settings_sub:"الوضع الليلي، اللغة والمزيد",
+    about_sub:"مهمتنا وفريقنا", join_sub:"استكشف الفرص الوظيفية",
+    sign_out:"تسجيل الخروج", sign_out_sub:"إنهاء جلستك",
+    dark_mode:"الوضع الليلي", dark_mode_sub:"مريح للعيون",
+    language:"اللغة", language_sub:"لغة عرض التطبيق",
+    font_size:"حجم الخط", font_size_sub:"اضبط حجم النص",
+    notifications:"الإشعارات", notifications_sub:"تنبيهات فورية للتحديثات",
+    sound:"الصوت", sound_sub:"أصوات الرسائل والتنبيهات",
+    notif1:"تم قبول الطلب #1042", notif1_sub:"جهاز اللابتوب قيد الإصلاح الآن",
+    notif2:"تم إكمال الطلب #1039", notif2_sub:"تم إصلاح موبايلك. اضغط للمراجعة.",
+    notif3:"رسالة جديدة من الفني", notif3_sub:"منذ ساعتين",
+    notif4:"تم تعيين فني", notif4_sub:"أمس · 3:40 م",
+    back:"رجوع", about_title:"عن منصة\nالنفايات الإلكترونية",
+    about_hero_sub:"المنصة الرائدة في مصر لإصلاح الإلكترونيات وإعادة تدويرها بشكل مسؤول.",
+    our_mission:"مهمتنا", mission_text:"نربط الشركات والأفراد بفنيين معتمدين لإصلاح الأجهزة وإعادة تدويرها بشكل مسؤول.",
+    by_numbers:"بالأرقام", our_values:"قيمنا", leadership:"فريق القيادة",
+    devices_fixed:"جهاز مُصلَح", technicians:"فني معتمد", satisfaction:"رضا العملاء",
+    v1:"الاستدامة", v1d:"كل إصلاح خطوة نحو كوكب أكثر خضرة.",
+    v2:"الثقة", v2d:"فنيون معتمدون وجودة مضمونة.",
+    v3:"السرعة", v3d:"إصلاح سريع مع تتبع فوري.",
+    v4:"الشفافية", v4d:"أسعار واضحة بدون رسوم خفية.",
+    ceo:"الرئيس التنفيذي والمؤسس المشارك", cto:"مدير التكنولوجيا والمؤسس المشارك",
+    head_ops:"رئيس العمليات", head_tech:"رئيس الدعم التقني",
+    join_the_team:"انضم للفريق", join_cta_text:"نبحث دائماً عن أشخاص موهوبين.",
+    see_positions:"رؤية الوظائف المتاحة ←",
+    join_title:"انضم\nلفريقنا", join_hero_sub:"ساعدنا في بناء مستقبل إدارة النفايات الإلكترونية في مصر.",
+    open_positions:"الوظائف المتاحة",
+    job1:"فني ميداني", job1_loc:"القاهرة · دوام كامل",
+    job2:"مهندس برمجيات", job2_loc:"عن بُعد · دوام كامل",
+    job3:"مدير عمليات", job3_loc:"الإسكندرية · دوام كامل",
+    job4:"خدمة العملاء", job4_loc:"القاهرة · دوام جزئي",
+    urgent:"عاجل", new_badge:"جديد",
+    apply_now:"قدّم الآن", applying_for:"التقديم على",
+    first_name:"الاسم الأول", last_name:"اسم العائلة",
+    email:"البريد الإلكتروني", phone:"رقم الهاتف", experience:"سنوات الخبرة",
+    select_exp:"اختر مستوى خبرتك",
+    exp0:"0–1 سنة (خريج حديث)", exp1:"1–3 سنوات", exp2:"3–5 سنوات", exp3:"5+ سنوات",
+    why_join:"لماذا تريد الانضمام؟",
+    upload_cv:"رفع السيرة الذاتية", cv_sub:"PDF أو Word، الحجم الأقصى 5MB",
+    submit_app:"إرسال الطلب ←",
+    app_submitted:"تم إرسال طلبك!", app_submitted_sub:"سيراجع فريق الموارد البشرية ملفك ويتواصل معك خلال 3–5 أيام عمل.",
+    all_requests:"كل الطلبات", all_users:"كل المستخدمين", conversations:"المحادثات",
+    pending_badge:"معلّق", active_badge:"نشط", done_badge:"مكتمل",
+    accept:"قبول", mark_done:"تأشير كمكتمل", remove:"إزالة",
+  }
+};
+
+/* ═══ STATE ═══ */
+const TCODE="tech2024";
+const db={users:{"admin":"1234"},requests:[],messages:[],me:null};
+let prevPage='pg-login';
+let lang='en';
+let dark=false;
+let fontSize='md';
+let activeTcUser=null;
+
+/* ═══ SHOW / NAVIGATE ═══ */
+function show(id){
+  const cur=document.querySelector('.pg.on');
+  if(cur) prevPage=cur.id;
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+function goBack(){show(prevPage);}
+
+/* ═══ AUTH SWITCH ═══ */
+function switchAuth(m){
+  document.getElementById('form-login').style.display=m==='login'?'block':'none';
+  document.getElementById('form-reg').style.display=m==='reg'?'block':'none';
+  document.getElementById('pill-login').classList.toggle('on',m==='login');
+  document.getElementById('pill-reg').classList.toggle('on',m==='reg');
+}
+
+/* ═══ TAB NAV ═══ */
+function gt(px,tab,btn){
+  const pg=px==='cl'?'pg-client':'pg-tech';
+  document.querySelectorAll('#'+pg+' .tab').forEach(t=>{t.classList.remove('on');});
+  document.getElementById(px+'-'+tab).classList.add('on');
+  document.querySelectorAll('#'+pg+' .nb').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  if(px==='cl'&&tab==='acc') renderStats();
+  if(px==='tc'&&tab==='users') renderUsers();
+  if(px==='tc'&&tab==='chat') renderTcUsers();
+}
+
+/* ═══ DARK MODE ═══ */
+function toggleDark(){
+  dark=!dark;
+  document.documentElement.setAttribute('data-theme', dark?'dark':'');
+  document.getElementById('darkToggle').classList.toggle('on',dark);
+  document.getElementById('qs-dark').textContent=dark?'☀️':'🌙';
+}
+
+/* ═══ LANGUAGE ═══ */
+function setLang(l){
+  lang=l;
+  const html=document.documentElement;
+  html.setAttribute('lang',l);
+  html.setAttribute('dir',l==='ar'?'rtl':'ltr');
+  document.getElementById('langEN').classList.toggle('on',l==='en');
+  document.getElementById('langAR').classList.toggle('on',l==='ar');
+  document.getElementById('qs-lang').textContent=l==='ar'?'EN':'عربي';
+  applyTranslations();
+}
+function quickLang(){setLang(lang==='en'?'ar':'en');}
+
+function applyTranslations(){
+  const d=T[lang];
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const k=el.getAttribute('data-t');
+    if(d[k]!==undefined) el.textContent=d[k];
+  });
+  document.querySelectorAll('[data-ph]').forEach(el=>{
+    const k=el.getAttribute('data-ph');
+    if(d[k]!==undefined) el.placeholder=d[k];
+  });
+  // Update qs-lang button
+  document.getElementById('qs-lang').textContent=lang==='ar'?'EN':'عربي';
+}
+
+/* ═══ FONT SIZE ═══ */
+function setFont(s){
+  fontSize=s;
+  const shell=document.getElementById('shell');
+  shell.classList.remove('fs-sm','fs-lg');
+  if(s==='sm') shell.classList.add('fs-sm');
+  if(s==='lg') shell.classList.add('fs-lg');
+  ['fsS','fsM','fsL'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  document.getElementById(s==='sm'?'fsS':s==='lg'?'fsL':'fsM').classList.add('on');
+}
+
+/* ═══ SETTINGS PANEL ═══ */
+function openSettings(){document.getElementById('settingsOverlay').classList.add('on');}
+function closeSettings(e){if(!e||e.target===document.getElementById('settingsOverlay')) document.getElementById('settingsOverlay').classList.remove('on');}
+
+/* ═══ NOTIFICATIONS ═══ */
+function openNotif(){document.getElementById('notifOverlay').classList.add('on');}
+function closeNotif(e){if(!e||e.target===document.getElementById('notifOverlay')) document.getElementById('notifOverlay').classList.remove('on');}
+
+/* ═══ AUTH ═══ */
+function login(){
+  const u=document.getElementById('loginName').value.trim();
+  const p=document.getElementById('loginPass').value;
+  if(!u||!p)return alert(lang==='ar'?'من فضلك أدخل كل البيانات':'Please fill all fields');
+  if(!db.users[u]||db.users[u]!==p)return alert(lang==='ar'?'بيانات غير صحيحة':'Invalid credentials');
+  db.me=u; show('pg-role');
+}
+function register(){
+  const u=document.getElementById('regName').value.trim();
+  const p=document.getElementById('regPass').value;
+  if(!u||!p)return alert(lang==='ar'?'من فضلك أدخل كل البيانات':'Please fill all fields');
+  if(db.users[u])return alert(lang==='ar'?'اسم المستخدم موجود بالفعل':'Username already taken');
+  db.users[u]=p; db.me=u; show('pg-role');
+}
+function setRole(r){
+  if(r==='client'){
+    const i=db.me.slice(0,2).toUpperCase();
+    ['clAv','accAv'].forEach(id=>document.getElementById(id).textContent=i);
+    ['clName','accName'].forEach(id=>document.getElementById(id).textContent=db.me);
+    renderReqs(); renderStats(); show('pg-client');
+  }
+}
+function checkTech(){
+  const c=prompt(lang==='ar'?'أدخل كود التيكنيشن:':'Enter technician access code:');
+  if(c===TCODE){
+    const i=db.me.slice(0,2).toUpperCase();
+    document.getElementById('tcAv').textContent=i;
+    document.getElementById('tcName').textContent=db.me;
+    renderTechReqs(); show('pg-tech');
+  } else alert(lang==='ar'?'كود غير صحيح':'Invalid access code');
+}
+function logout(){db.me=null; show('pg-login');}
+
+/* ═══ REQUESTS ═══ */
+function prevImg(input){
+  const pv=document.getElementById('imgPrev');pv.innerHTML='';
+  if(input.files&&input.files[0]){
+    const r=new FileReader();
+    r.onload=e=>{const img=new Image();img.src=e.target.result;img.style.cssText='width:100%;border-radius:8px;margin-top:6px;';pv.appendChild(img);};
+    r.readAsDataURL(input.files[0]);
+  }
+}
+function addReq(){
+  const d=document.getElementById('device').value.trim();
+  const p=document.getElementById('problem').value.trim();
+  if(!d||!p)return alert(lang==='ar'?'من فضلك أدخل نوع الجهاز والمشكلة':'Please fill device type and problem');
+  const req={id:Date.now(),user:db.me,device:d,problem:p,status:'pending',
+    time:new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}),image:null};
+  const fi=document.getElementById('img');
+  const done=()=>{db.requests.unshift(req);clrForm();renderReqs();renderTechReqs();};
+  if(fi.files[0]){const r=new FileReader();r.onload=e=>{req.image=e.target.result;done();};r.readAsDataURL(fi.files[0]);}
+  else done();
+}
+function clrForm(){
+  ['device','problem'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('img').value='';
+  document.getElementById('imgPrev').innerHTML='';
+}
+function bc(s){return s==='done'?'b-done':s==='active'?'b-actv':'b-pend';}
+function bl(s){const d=T[lang];return s==='done'?d.done_badge:s==='active'?d.active_badge:d.pending_badge;}
+
+function renderReqs(){
+  const list=document.getElementById('reqList');
+  const mine=db.requests.filter(r=>r.user===db.me);
+  const d=T[lang];
+  document.getElementById('rCount').textContent=mine.length+' '+d.total.toLowerCase();
+  if(!mine.length){list.innerHTML=`<div class="empty"><div class="ei">📭</div><p>${d.my_requests}</p><small>${d.submit_request.replace(' →','')}</small></div>`;return;}
+  list.innerHTML=mine.map(r=>`
+    <div class="req-card">
+      <div class="rt">
+        <div><div class="r-title">💻 ${r.device}</div><div class="r-desc">${r.problem}</div></div>
+        <span class="badge ${bc(r.status)}">${bl(r.status)}</span>
+      </div>
+      ${r.image?`<img src="${r.image}" alt="">`:''}
+      <div class="r-meta">🕐 ${r.time}</div>
+    </div>`).join('');
+}
+
+function renderTechReqs(){
+  const list=document.getElementById('tcReqList');
+  const d=T[lang];
+  const open=db.requests.filter(r=>r.status!=='done').length;
+  document.getElementById('openCnt').textContent=open+' open';
+  document.getElementById('tcCnt').textContent=db.requests.length+' '+d.total.toLowerCase();
+  if(!db.requests.length){list.innerHTML=`<div class="empty"><div class="ei">📭</div><p>${d.all_requests}</p></div>`;return;}
+  list.innerHTML=db.requests.map(r=>`
+    <div class="tech-req">
+      <div class="tr-top">
+        <div class="tr-user"><div class="tr-av">${r.user.slice(0,2).toUpperCase()}</div><span class="tr-name">${r.user}</span></div>
+        <span class="badge ${bc(r.status)}">${bl(r.status)}</span>
+      </div>
+      <div class="tr-dev">💻 ${r.device}</div>
+      <div class="tr-desc">${r.problem}</div>
+      ${r.image?`<img src="${r.image}" style="width:100%;border-radius:7px;margin-top:8px;">`:''}
+      <div class="r-meta" style="margin-top:7px;">🕐 ${r.time}</div>
+      <div class="acts">
+        ${r.status==='pending'?`<button class="act ok" onclick="setSt(${r.id},'active')">${d.accept}</button>`:''}
+        ${r.status==='active'?`<button class="act done" onclick="setSt(${r.id},'done')">${d.mark_done}</button>`:''}
+        <button class="act del" onclick="delReq(${r.id})">${d.remove}</button>
+      </div>
+    </div>`).join('');
+}
+function setSt(id,s){const r=db.requests.find(r=>r.id===id);if(r){r.status=s;renderTechReqs();}}
+function delReq(id){db.requests=db.requests.filter(r=>r.id!==id);renderTechReqs();}
+function renderStats(){
+  const m=db.requests.filter(r=>r.user===db.me);
+  document.getElementById('sT').textContent=m.length;
+  document.getElementById('sP').textContent=m.filter(r=>r.status==='pending').length;
+  document.getElementById('sD').textContent=m.filter(r=>r.status==='done').length;
+}
+
+/* ═══ CHAT ═══ */
+function sendMsg(){
+  const inp=document.getElementById('msg');
+  const t=inp.value.trim();if(!t)return;
+  db.messages.push({sender:db.me,text:t});
+  inp.value='';renderChat('chatBox',db.me);
+}
+function renderChat(boxId,me){
+  const box=document.getElementById(boxId);
+  const d=T[lang];
+  if(!db.messages.length){box.innerHTML=`<div class="empty" style="padding:30px 0;"><div class="ei">💬</div><p>${d.chat}</p></div>`;return;}
+  box.innerHTML=db.messages.map(m=>`
+    <div class="msg-row ${m.sender===me?'me':''}">
+      <div class="bubble ${m.sender===me?'me':'them'}">${m.text}</div>
+    </div>`).join('');
+  box.scrollTop=box.scrollHeight;
+}
+function renderTcUsers(){
+  const div=document.getElementById('tcUserList');
+  const us=Object.keys(db.users).filter(u=>u!==db.me);
+  const d=T[lang];
+  if(!us.length){div.innerHTML=`<div class="empty"><div class="ei">👥</div><p>${d.users}</p></div>`;return;}
+  div.innerHTML=us.map(u=>`
+    <div class="cu-item ${activeTcUser===u?'sel':''}" onclick="pickUser('${u}')">
+      <div class="cu-av">${u.slice(0,2).toUpperCase()}</div>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--ink);">${u}</div>
+      <div style="font-size:11px;color:var(--ink3);">${db.messages.filter(m=>m.sender===u).length} msg</div></div>
+      <span style="color:var(--ink4);">›</span>
+    </div>`).join('');
+}
+function pickUser(u){
+  activeTcUser=u;
+  document.getElementById('tcChatArea').style.display='flex';
+  renderTcUsers();renderChat('tcChatBox',db.me);
+}
+function sendReply(){
+  const inp=document.getElementById('tmsg');
+  const t=inp.value.trim();if(!t)return;
+  db.messages.push({sender:db.me,text:t});
+  inp.value='';renderChat('tcChatBox',db.me);
+}
+function renderUsers(){
+  const div=document.getElementById('usersList');
+  const us=Object.keys(db.users).filter(u=>u!==db.me);
+  const d=T[lang];
+  if(!us.length){div.innerHTML=`<div class="empty"><div class="ei">👥</div><p>${d.users}</p></div>`;return;}
+  div.innerHTML=us.map(u=>{
+    const n=db.requests.filter(r=>r.user===u).length;
+    return `<div class="u-item">
+      <div class="u-av">${u.slice(0,2).toUpperCase()}</div>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--ink);">${u}</div>
+      <div style="font-size:11px;color:var(--ink3);">${n} ${d.requests.toLowerCase()}</div></div>
+      <span class="badge b-actv">${d.active_badge}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ═══ JOBS ═══ */
+function selectJob(pos){
+  document.getElementById('jobPos').value=pos;
+  document.querySelectorAll('.job-card').forEach(c=>c.classList.remove('sel'));
+  const map={'Field Technician':'job-tech','Software Engineer':'job-dev','Operations Manager':'job-ops','Customer Success':'job-cs'};
+  const el=document.getElementById(map[pos]);
+  if(el) el.classList.add('sel');
+  document.getElementById('appFirst').focus();
+}
+function submitApp(){
+  const pos=document.getElementById('jobPos').value;
+  const fn=document.getElementById('appFirst').value.trim();
+  const em=document.getElementById('appEmail').value.trim();
+  const d=T[lang];
+  if(!pos)return alert(lang==='ar'?'اختر وظيفة أولاً':'Please select a position');
+  if(!fn)return alert(lang==='ar'?'أدخل اسمك':'Please enter your name');
+  if(!em||!em.includes('@'))return alert(lang==='ar'?'أدخل بريد إلكتروني صحيح':'Please enter a valid email');
+  document.getElementById('appSuccess').style.display='block';
+  document.getElementById('appSuccess').scrollIntoView({behavior:'smooth'});
+  ['jobPos','appFirst','appLast','appEmail','appPhone','appWhy'].forEach(id=>document.getElementById(id).value='');
+  document.querySelectorAll('.job-card').forEach(c=>c.classList.remove('sel'));
+}
+
+/* ═══ KEYBOARD ═══ */
+document.getElementById('msg').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg();});
+document.getElementById('tmsg').addEventListener('keydown',e=>{if(e.key==='Enter')sendReply();});
+document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+</script>
+</body>
+</html>
