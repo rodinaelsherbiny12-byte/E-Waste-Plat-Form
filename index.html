@@ -1158,6 +1158,33 @@ function submitApp(){
 document.getElementById('msg').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg();});
 document.getElementById('tmsg').addEventListener('keydown',e=>{if(e.key==='Enter')sendReply();});
 document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+  </script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDphlazZJM-AgRg-Xz8kGsNAfJNxiZ80p5w",
+  authDomain: "hacthon-1ebd1.firebaseapp.com",
+  projectId: "hacthon-1ebd1",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.submitApp = async function () {
+  const name = document.getElementById("appFirst").value;
+  const email = document.getElementById("appEmail").value;
+
+  await addDoc(collection(db, "requests"), {
+    name: name,
+    email: email,
+    time: new Date()
+  });
+
+  alert("تم الإرسال 🎉");
+};
 </script>
 </body>
 </html>
